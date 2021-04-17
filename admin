@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use YAML qw(LoadFile);
+
+
+my $event = $ARGV[0];
+my $base_url = 'https://hucs.nl/date-picker/?';
+
+my $event_data = LoadFile("data/$event.yml");
+
+my $users = $event_data->{users};
+
+my $username;
+my $url;
+format USER_OUTPUT =
+@<<<<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$username, $url
+.
+
+select(STDOUT);
+$~ = "USER_OUTPUT";
+
+for my $user (sort { $users->{$a}->{name} cmp $users->{$b}->{name} }
+              keys $event_data->{users}->%*) {
+  $username = $users->{$user}->{name};
+  $url = "$base_url$event/$user";
+  write;
+}
+print "\n";
+

@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1">
+    <title>Date selector app</title>
+    <!-- development version, includes helpful console warnings -->
+    <script src="//cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+    <style>
+      body {
+          font-family: Verdana, Sans Serif;
+      }
+      table {
+          margin-bottom: 2em;
+      }
+      tr.unselectable {
+          color: #666;
+          background-color: #eee;
+      }
+      tr.selectable {
+          background-color: #ff8;
+      }
+      tr.selectable td:hover {
+          background-color: #dd7;
+      }
+      td { text-align: center; padding: 0.5ex; }
+      th { text-align: center; padding: 0 1em 0 1em; }
+      tr.subheading th { font-weight: normal; font-size: 85% }
+      thead { margin-top: 1em; margin-bottom: 0.5ex; }
+      div.wrapper {
+          margin: 2em 2em 2em 1em;
+          padding-bottom: 4em;
+      }
+      div.error {
+          display: inline-block;
+          border: 2px solid red;
+          border-radius: 5px;
+          padding: 0.7ex;
+      }
+      @media screen only and (orientation: portrait) and (max-width: 600px) {
+         div.feedback {
+            width: 100%;
+            left: 0;
+         }
+      }
+      @media (orientation: landscape) or (min-width: 600px) {
+         div.feedback {
+            width: 60ex;
+            left: calc(80% - 60ex);
+         }
+      }
+      div.feedback {
+          position: absolute;
+          top: 2em;
+          background-color: #8e8;
+          border-radius: 5px;
+          box-shadow: 6px 6px #eee ;
+          padding: 1ex;
+          text-align: center;
+      }
+      div.no-feedback {
+          display: none;
+      }
+      div.footer {
+          position: fixed;
+          font-size: 75%;
+          height: 4em;
+          left: 0;
+          top: calc(100% - 4em);
+          width: 100%;
+          padding: 1ex;
+          box-sizing: border-box;
+          text-align: center;
+      }
+      body {
+          height: 100%;
+      }
+      html {
+          height: 100%;
+      }
+      div.footer hr {
+          height: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>Date selector app</h1>
+      <div id="app">
+        <div class="feedback" v-bind:class="{ 'no-feedback': !feedback  }">
+          {{ feedback }}
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th v-for="head in headers" :id="head.id + '-date-header'">
+                {{ head.date }}
+              </th>
+            </tr>
+            <tr class="subheading">
+              <th v-for="head in headers" :id="head.id + '-time-header'">
+                {{ head.time }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, index) in rows" :class="row.selectable ? 'selectable' : 'unselectable'">
+              <td v-for="cell in headers">
+                <template v-if="cell.id === 'name'">
+                  {{ row[cell.id] }}
+                </template>
+                <template v-else>
+                  <input type="checkbox" :id="'row-' + index + '-' + cell.id"
+                         v-model="row.dates[cell.id]" :disabled="!row.selectable">
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <button v-on:click="submit">Submit</button>
+        <div class="error" v-show="error">
+          {{ error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+    <hr>
+      Copyright 2021 | Erik H&uuml;lsmann | HUCS b.v.
+    </div>
+  </body>
+</html>
+<script src="js/js.js"></script>
