@@ -371,7 +371,18 @@ $router->add_route(
 
 my $builder = Plack::Builder->new();
 if ($ENV{PLACK_ENV} eq 'development') {
-    $builder->add_middleware('CrossOrigin', origins => '*', max_age => 60*60*24*30);
+    print STDERR "Adding cross-origin middleware for development deployments\n";
+    $builder->add_middleware('CrossOrigin',
+                             origins => '*',
+                             max_age => 60*60*24*30,
+                             headers => [ qw(
+                                          Cache-Control Depth
+                                          If-Modified-Since User-Agent
+                                          X-File-Name X-File-Size
+                                          X-Requested-With
+                                          X-Prototype-Version
+                                          Content-Type
+                                          ) ]);
 }
 $builder->mount('/data/' => Plack::App::Path::Router->new(router => $router)->to_app);
 $builder->mount( '/js/' => Plack::App::File->new(root => './ui/dist/js/')->to_app);
